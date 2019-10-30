@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <script type="text/javascript" src="../resources/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../resources/js/echarts.min.js"></script>
+</head>
+<body>
+<div class="easyui-layout" data-options="fit:true">
+    <div data-options="region:'north'" style="width: 100%;height: 9%">
+        <input type="text" id="trainType" name="trainType"/>
+        <input type="text" id="groupBy" name="groupBy"/>
+        <button onclick="getStatisticDataList()">查询</button>
+    </div>
+
+    <div data-options="region:'center'" style="width: 100%;height: 60%">
+        <div id="tt1" class="easyui-tabs" tabHeight="35">
+
+            <div title="统计" >
+                <table>
+                    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+                    <div id="main" style="height: 500px"></div>
+                    <!-- ECharts单文件引入 -->
+            </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    function getStatisticDataList()
+    {
+        //var trainType=document.getElementById("trainType").value;
+        //var groupBy=document.getElementById("groupBy").value;
+        var data1=[];
+        var data2=[];
+
+
+    // 基于准备好的dom，初始化echarts图表
+    var myChart = echarts.init(document.getElementById('main'));
+    option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['降水量1','折线2']
+        },
+        xAxis: [
+            {
+                type: 'category',
+                data: data1
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: '水量/ml',
+                min: 0,
+                max: 1150,
+                interval: 50,
+                axisLabel: {
+                    formatter: '{value} '
+                }
+            }
+        ],
+        series: [
+
+            {
+                name:'降水量1',
+                type:'bar',
+                /*设置柱状图颜色*/
+                itemStyle: {
+                    normal: {
+                        color:'#4bbbee',
+                        /*柱形图上每个柱子顶端中间显示的数据*/
+                        label: {
+                            show: true,
+                            position: 'top',
+                            formatter: '{b}\n{c}'
+                        }
+                    }
+                },
+                data: data2
+            },
+            {
+                name:'折线2',
+                type:'line',
+                itemStyle : {  /*设置折线颜色*/
+                    normal : {
+                        color:'#c5ee4a'
+                    }
+                },
+                data: data2
+            }
+        ]
+    };
+
+        $.ajax({
+            url: "/o2o/energy/listmms301t0info",
+            type: "GET",
+            data: {},
+            datatype: "json",
+            success: function (r) {
+
+                for(var i in r.mms301t0List){
+                    data1.push(r.mms301t0List[i].factno);
+                    data2.push(r.mms301t0List[i].out_Qty);
+                }
+                myChart.setOption(option);
+            }
+        })
+    }
+</script>
+</body>
+</html>

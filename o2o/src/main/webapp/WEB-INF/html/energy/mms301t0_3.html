@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <script type="text/javascript" src="../resources/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../resources/js/echarts.min.js"></script>
+    
+    <title>体重</title>
+</head>
+
+<body>
+<h1 style="text-align: center">产量查看页面</h1>
+<a href="javascript:void(0)" onclick="showWeight()"
+   style="text-decoration: none;margin-left: 140px">查看产重</a>
+<div class="select-wrap">
+	<select	class="select" id="fuel-search">
+		<option value="11">水</option>
+		<option value="12">电</option>
+		<option value="13">蒸汽</option>
+	</select>
+</div>   
+<div id="main" style="height:460px;width: 85%;margin: 20px auto 0"></div>
+
+
+<script type="text/javascript">
+    var option;
+    var myChart;
+    var fuel_no;
+    //alert("11");
+    $(function () {
+        initChart()
+        //基于准备好的dom，初始化echarts实例
+        myChart = echarts.init(document.getElementById('main'));
+        //myChart.setOption(option)
+    })
+    //alert("22");
+    
+    
+    
+    
+    
+    //var Url = '/o2o/energy/listmms301t0info3'+'?'+'fuel_no='+11;
+    //alert("55");
+    
+    
+    function showWeight() {
+    	var searchDivUrl = '/o2o/energy/listmms301t0info3';
+    	var Url = searchDivUrl + '?' + 'fuel_no=' + fuel_no;
+        //alert("66");
+    	$.ajax({
+            type: "GET",
+            url: Url,
+            data: {},
+            success: function (r) {
+                //console.log(r)
+                initChart()
+                //option.title.text = r.username+"的体重"
+                option.legend.data[0] = r.factno
+                option.series[0] = {"name": r.factno, "type": "line", "data": []}
+                //option.series[0].name = r.username
+                //option.series[0].type = 'line'
+                for (var i in r.mms301t0List3) {
+                    option.series[0].data[i] = r.mms301t0List3[i].out_Qty
+                    option.xAxis[0].data[i] = r.mms301t0List3[i].factno
+                }
+                //option.series[1] = {"name": r.username, "type": "line", "data": [1,2,8,12,21,9]}
+                myChart.setOption(option)
+            }
+        });
+    }
+
+    function initChart() {
+        option = {
+            title: {
+                text: "能源产量趋势表",
+                x: "center"
+            },
+            tooltip: {
+                trigger: "item",
+                formatter: "{a} <br/>{b} : {c}kg"
+            },
+            legend: {
+                x: 'left',
+                data: []
+            },
+            xAxis: [
+                {
+                    type: "category",
+                    name: "厂别",
+                    splitLine: {show: false},
+                    data: []
+                }
+            ],
+            
+            dataZoom: [{
+                type: 'slider',
+                show: true,
+                xAxisIndex: [0],
+                left: 20,
+                right: 20,
+                bottom: 30,
+                start: 10,
+                end: 90, //初始化滚动条
+                handleColor: '#CBBCDB'
+            }],
+            
+            yAxis: [
+                {
+                    type: "value",
+                    axisLabel: {
+                        formatter: '{value} kg'
+                    },
+                    name: "产量",
+                    max: 900,
+                    min: 50,
+                    splitNumber: 5
+                }
+            ],
+            toolbox: {
+                show: true,
+                feature: {
+                    mark: {
+                        show: true
+                    },
+                    dataView: {
+                        show: true,
+                        readOnly: true
+                    },
+                    restore: {
+                        show: true
+                    },
+                    saveAsImage: {
+                        show: true
+                    }
+                }
+            },
+            calculable: true,
+            series: []
+        };
+    }
+
+    
+    $('#fuel-search').on('change', function() {
+    	fuel_no = $('#fuel-search').val();
+    	//fuel_no=11;
+    	showWeight();
+	});
+    //alert(fuel_no);
+</script>
+
+</body>
+</html>

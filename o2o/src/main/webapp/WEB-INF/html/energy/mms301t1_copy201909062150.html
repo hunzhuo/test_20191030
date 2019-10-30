@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <script type="text/javascript" src="../resources/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../resources/js/echarts.min.js"></script>
+</head>
+
+<script type="text/javascript">
+   var option
+   var myChart
+   $(function () {
+       initChart()
+       //基于准备好的dom，初始化echarts实例
+       myChart = echarts.init(document.getElementById('main'));
+       //myChart.setOption(option)
+   })
+        
+        var data1=[];    //横坐标数组（实际用来盛放X轴坐标值）
+        var data2=[];    //纵坐标数组（实际用来盛放Y坐标值）
+        var array=[];
+        //alert('bb');
+      /* $(document).ready( */
+      function showWeight() {  
+        $.ajax({
+            type : "GET",
+            async : true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+            url : "/o2o/energy/listmms301t0info",    //请求发送到dataActiont处
+            data : {},
+            dataType : "json",        //返回数据形式为json
+            success : function(r) {
+               
+                initChart()
+                    
+                option.legend.data[0] = r.factno
+                option.series[0] = {"name": r.factno, "type": "line", "data": []}
+                for (var i in r.mms301t0List) {
+                    option.series[0].data[i] = r.mms301t0List[i].out_Qty
+                    option.xAxis[0].data[i] = r.mms301t0List[i].factno
+                }
+                myChart.setOption(option)
+            } 
+           });   
+      }    
+      
+      function initChart() {
+    	  option ={        //加载数据图表
+                        tooltip: {},
+                        legend: {
+                            data:['數量']
+                        },
+                        xAxis: {
+                            data: []
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [{
+                            // 根据名字对应到相应的系列
+                            name: '數量',
+                            type: 'bar',
+                            data: []
+                        }]
+                    };
+            }
+        
+</script>
+
+
+<body>
+<h1 style="text-align: center">产量查看页面</h1>
+<a href="javascript:void(0)" onclick="showWeight()"
+   style="text-decoration: none;margin-left: 140px">查看产重</a>
+<div id="main" style="height:460px;width: 85%;margin: 20px auto 0"></div>
+</body>
+</html>

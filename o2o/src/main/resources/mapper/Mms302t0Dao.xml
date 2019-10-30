@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imooc.o2o.dao.Mms301t0Dao">
+	<resultMap type="com.imooc.o2o.entity.Mms301t0" id="mms301t0Map">
+		<id column="mms301t0_id" property="mms301t0Id" />
+		<result column="factno" property="factno" />
+		<result column="yyyymmdd" property="yyyyMmDd" />
+		<result column="fuel_no" property="fuel_No" />
+		<result column="dept_id" property="dept_Id" />
+		<result column="cons_qty" property="cons_Qty" />
+		<result column="out_qty" property="out_Qty" />
+		<result column="kind" property="kind" />
+		<result column="status" property="status" />
+		<result column="ins_user" property="ins_User" />
+		<result column="ins_date" property="ins_Date" />
+		<result column="upd_user" property="upd_User" />
+		<result column="upd_date" property="upd_Date" />
+		<result column="fact_mark" property="fact_Mark" />
+		<result column="loss_qty" property="loss_Qty" />
+		<result column="hot_qty" property="hot_Qty" />
+	      <!--  复合类型	 -->
+	   
+	</resultMap> 
+	<select id="queryMms301t0List" resultMap="mms301t0Map">
+		
+		SELECT a.factno as factno,
+		     substr(a.yyyymmdd,1,6),
+		sum(a.out_qty) as out_Qty
+       FROM mms301t0 a 
+       GROUP BY  a.factno, substr(a.yyyymmdd,1,6)
+		
+	</select> 
+	
+	<select id="queryMms301t0List2" resultMap="mms301t0Map">
+		
+		SELECT a.factno as factno,
+		     substr(a.yyyymmdd,1,6),
+		sum(a.out_qty) as out_Qty
+       FROM mms301t0 a where fuel_no=#{fuel_no} and kind=#{kind}
+       GROUP BY  a.factno, substr(a.yyyymmdd,1,6)
+		
+	</select> 
+	
+	<select id="queryMms301t0List3" resultMap="mms301t0Map">
+		
+		SELECT a.factno as factno,
+		     substr(a.yyyymmdd,1,6),
+		sum(a.out_qty) as out_Qty
+       FROM mms301t0 a where fuel_no=#{fuel_no} and kind=#{kind}
+       GROUP BY  a.factno, substr(a.yyyymmdd,1,6)
+		
+	</select>
+	
+
+</mapper>
